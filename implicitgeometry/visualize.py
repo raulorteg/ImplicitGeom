@@ -148,7 +148,7 @@ def create_molecule_object(atom_symbols: list, positions: list, adjacency_matrix
     bond_data = []
     for i in range(len(atom_symbols)):
         for j in range(i + 1, len(atom_symbols)):
-            if adjacency_matrix[i, j] >= 0:
+            if adjacency_matrix[i, j] >= 1:  # not this wont draw the bonds
                 bond_data.append(
                     {
                         "atom1": i,
