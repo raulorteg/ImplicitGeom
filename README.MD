@@ -1,5 +1,7 @@
 # Implicit Geometry
 
+_Note: this is simply a for fun mini-project_
+
 This approach showcases that it’s possible to get 'some estimate' of the 3D geometry of a molecule based solely on its connectivity (and specially for some special molecules), without requiring any physics other than knowing standard bond lengths between atom pairs. These bond lengths can be retrieved from the NIST database https://cccbdb.nist.gov/diatomicexpbondx.asp.
 
 When predicting the 3D coordinates for a system of NN atoms, the system has 3N degrees of freedom (corresponding to the x,y,z coordinates of each atom). To eliminate the global translation, we fix one atom’s position at (x1,y1,z1)=(0,0,0). To remove rotational degrees of freedom, we place a second atom along the x-axis at (x2,y2,z2)=(d12,0,0), where d12​ is the bond length between atoms 1 and 2. Additionally, we remove reflectional degrees of freedom by setting the third atom in the xy-plane at (x3,y3,z3)=(d13,d23,0). After applying these constraints, the system retains 3N−6 degrees of freedom.
