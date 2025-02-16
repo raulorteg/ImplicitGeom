@@ -3,6 +3,8 @@ from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
+import torch
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.linalg import norm
 
@@ -164,6 +166,12 @@ def create_molecule_object(atom_symbols: list, positions: list, adjacency_matrix
 
 def plot_3dmolecule(
     molecule_info: dict,
+    pred_pairwise_distances: torch.tensor,
+    pred_adjacency_matrix: torch.tensor,
+    iters: list,
+    k: list,
+    diff_losses: list,
+    real_losses: list,
     filename: str = None,
     activation: list = None,
     azim: int = 55,
@@ -171,16 +179,14 @@ def plot_3dmolecule(
     bond_resolution: int = 15,
     atom_resolution: int = 20,
     dpi: int = 300,
-    step: int = None,
-    loss: float = None,
+    title: str = None,
 ):
     # create the figure
-    fig = plt.figure(figsize=(6, 6))
-    ax = fig.add_subplot(projection="3d")
+    fig = plt.figure(figsize=(12, 12))
+    ax = fig.add_subplot(221, projection="3d")
     ax.set_aspect("equal")
     ax.set_box_aspect([1, 1, 1])
-    if step:
-        ax.set_title(f"Step {step}, loss= {loss}")
+    ax.set_title("Reconstruction")
 
     # define the point of view (azimut and elevation)
     ax.view_init(elev=elev, azim=azim)
@@ -250,6 +256,41 @@ def plot_3dmolecule(
                 resolution=atom_resolution,
             )
 
+    # heatmap plot showing the atom connectivity (adjacency matrix)
+    ax2 = fig.add_subplot(222)
+    tensor_np = pred_adjacency_matrix.numpy()
+    sns.heatmap(
+        tensor_np, cmap="gray", cbar=False, linewidths=0.5, linecolor="black", ax=ax2
+    )
+    ax2.set_title("Predicted connectivity")
+    ax2.set_xticks([])
+    ax2.set_yticks([])
+
+    # heatmap plot showing the pairwise-distances
+    ax2 = fig.add_subplot(223)
+    tensor_np = pred_pairwise_distances.numpy()
+    sns.heatmap(
+        tensor_np, cmap="magma", cbar=True, linewidths=0.5, linecolor="black", ax=ax2
+    )
+    ax2.set_title("Predicted pairwise-distances")
+    ax2.set_xticks([])
+    ax2.set_yticks([])
+
+    ax2 = fig.add_subplot(224)
+    ax2.plot(iters, real_losses, label="Real Loss", color="black", linestyle="--")
+    ax2.plot(iters, diff_losses, label="Diff Loss", color="black")
+
+    # here add
+    ax3 = ax2.twinx()
+    ax3.plot(iters, k, label="K Value", color="red")
+    ax3.set_ylabel("K Value")
+
+    ax2.set_title("Loss evolution")
+    ax2.set_xlabel("Number iterations")
+    ax2.set_ylabel("MSE Loss")
+    ax2.legend(loc="upper right")
+
+    fig.suptitle(title, fontsize=14)
     if not filename:
         buffer = io.BytesIO()
         fig.savefig(buffer, format="png")
