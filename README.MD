@@ -14,7 +14,8 @@ Given a tuple of atomic symbols ($S_1$,$S_2$,...,$S_n$) and a NxN adjacency matr
 
 $\{(x_{i}^{*},x_{i}^{*},z_{i}^{*})\}^{N} = argmin_{\{(x_{i},x_{i},z_{i})\}^{N}} \sum_{i=1}^{N} \sum_{j=1,j\neq i}^{N} \left[\sigma \left(b_{ij}-d_{ij}\right)-a_{ij}\right]$
 
-![](figures/test_large.gif)
+![](figures/test_fullerene.gif)
+
 
 ## Installation
 
@@ -66,4 +67,4 @@ python main.py --smiles 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C'
    ```
 
 ## Gallery
-![](figures/test_c70.gif)
+![](figures/test_large.gif)
